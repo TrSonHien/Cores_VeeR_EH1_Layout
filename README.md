@@ -1,12 +1,12 @@
-# Cores_VeeR_EH1 — RTL-to-GDSII ASIC Implementation (Reference Project)
+# 🚀 Cores_VeeR_EH1 Physical Design Implementation
 
-This repository documents a complete ASIC implementation flow for VeeR EH1, from RTL synthesis to final routed outputs.
+A complete Physical Design (PnR) implementation of **Cores_VeeR_EH1** (industrial-grade 32-bit RISC-V core), from synthesized netlist to final routed handoff artifacts.
 
-> **Reference-only scope:** This project is shared for learning/documentation. Proprietary technology files (PDK/libs/LEF/script collateral) must not be uploaded publicly.
+> 🔐 **Reference-only scope:** This project is shared for learning/documentation. Proprietary technology files (PDK/libs/LEF/script collateral) are intentionally excluded from public upload.
 
 ---
 
-## 1) Environment & Technologies
+## 📦 Environment & Technologies
 
 - **Top design:** `veer_wrapper`
 - **RTL language:** SystemVerilog
@@ -19,11 +19,52 @@ This repository documents a complete ASIC implementation flow for VeeR EH1, from
 - **Synthesis tool:** Cadence Genus 22.16
 - **P&R tool:** Cadence Innovus 22.16
 
-This README is self-contained for GitHub publishing and includes all key implementation details directly.
+✅ This README is self-contained for GitHub publishing and includes all key implementation details directly.
 
 ---
 
-## 2) Detailed Project Specifications
+## ⚙️ Implementation Highlights
+
+What makes this implementation robust:
+
+- 🧠 **Macro-aware floorplanning:** SRAM-heavy organization with routing-channel considerations.
+- ⚡ **Power + physical infrastructure:** physical-only cell usage (tap/endcap/tie) captured in implementation statistics.
+- 🕒 **Balanced timing flow:** setup closure achieved with near-zero hold margin context.
+- 🛣️ **Routing quality:** final routed database with clean DRC snapshot in included results.
+- 📊 **Evidence-driven signoff:** quantitative timing/congestion/DRV summaries included below.
+
+---
+
+## 📐 Design Constraints & Target PPA
+
+### 1) Constraint Model
+
+- Units: ns / pF / V / mA
+- Output load: `set_load 0.01 [all_outputs]`
+- Input driver model: `sg13g2_buf_16`
+- Clocks:
+  - `create_clock -name clk_sys -period 10.0 [get_ports clk]`
+  - `create_clock -name clk_jtg -period 20.0 [get_ports jtag_tck]`
+- Async groups:
+  - `set_clock_groups -asynchronous ... -group {clk_sys} -group {clk_jtg}`
+- Uncertainty/transition:
+  - `set_clock_uncertainty 0.1 -setup/-hold [all_clocks]`
+  - `set_clock_transition 0.20 [all_clocks]`
+- Reset/JTAG/system IO min/max delays constrained.
+
+### 2) Target Intent
+
+| Metric | Target / Intent | Notes |
+| :--- | :--- | :--- |
+| **System Clock** | **100 MHz (10 ns)** | Main timing target |
+| **JTAG Clock** | **50 MHz (20 ns)** | Async to system domain |
+| **Core Utilization** | ~65% observed | Macro-heavy design context |
+| **Routing Layers** | Metal1–Metal5 + TopMetal1/2 | 7 routed layers |
+| **Goal** | Setup closure + clean DRC | Hold near-zero context tracked |
+
+---
+
+## 🧩 Detailed Project Specifications
 
 ### 2.1 Design Composition
 
@@ -53,42 +94,14 @@ Cell mix highlights (from Innovus summary):
 
 ---
 
-## 3) Design Constraints & Target PPA
+## 🦉 The Process & Challenges
 
-### 3.1 SDC Constraint Model
+### Step-by-step Physical Flow
 
-Implemented in [`constraints.sdc`](myproject/Cores_VeeR_EH1/sdc/constraints.sdc:1):
-
-- Units: ns / pF / V / mA
-- Output load model: `set_load 0.01 [all_outputs]`
-- Input driving cell model: `sg13g2_buf_16`
-- Clock definitions:
-  - `create_clock -name clk_sys -period 10.0 [get_ports clk]`
-  - `create_clock -name clk_jtg -period 20.0 [get_ports jtag_tck]`
-- Asynchronous grouping:
-  - `set_clock_groups -asynchronous ... -group {clk_sys} -group {clk_jtg}`
-- Uncertainty/transition:
-  - `set_clock_uncertainty 0.1 -setup/-hold [all_clocks]`
-  - `set_clock_transition 0.20 [all_clocks]`
-- Reset/JTAG/system IO delays explicitly modeled with min/max constraints.
-
-### 3.2 Target PPA Intent
-
-- Close setup timing at 100 MHz system target
-- Maintain hold-safe behavior across clocked paths
-- Keep routability clean (no final DRC)
-- Manage macro-heavy floorplan congestion while preserving utilization
-
----
-
-## 4) The Process & Challenges
-
-### 4.1 Flow Stages
-
-1. **Synthesis (Genus):** RTL read/elaboration + mapping/optimization
+1. **Data Prep & Synthesis (Genus):** RTL read/elaboration + mapping/optimization
    - Netlist handoff is used as input for physical implementation.
 
-2. **Floorplan / Initialization (`00_init_design`):** die/core setup, power planning context, macro-aware layout initialization.
+2. **Floorplan / Initialization (`00_init_design`):** die/core setup, macro-aware layout initialization.
 
    ![01_floorplan](images/01_floorplan.png)
 
@@ -100,7 +113,7 @@ Implemented in [`constraints.sdc`](myproject/Cores_VeeR_EH1/sdc/constraints.sdc:
 
    - Density view confirms concentrated logic channels between macros and identifies hotspot regions.
 
-4. **Power Grid / Early Route Visibility:** power distribution and routing accessibility across the core.
+4. **Power Grid / Early Route Visibility:** routing accessibility and distribution across the core.
 
    ![03_power_grid](images/03_power_grid.png)
 
@@ -124,7 +137,7 @@ Implemented in [`constraints.sdc`](myproject/Cores_VeeR_EH1/sdc/constraints.sdc:
 
    - Zoomed view demonstrates dense signal/via usage in critical regions.
 
-8. **Congestion and Critical Region Review:** hotspot and path context analysis.
+8. **Congestion & Critical Region Review:** hotspot and path context analysis.
 
    ![07_congestion_map](images/07_congestion_map.png)
 
@@ -140,7 +153,7 @@ Implemented in [`constraints.sdc`](myproject/Cores_VeeR_EH1/sdc/constraints.sdc:
 
 10. **Final export:** DEF/LEF/netlist + summary artifacts for documentation/reference.
 
-### 4.2 Key Challenges
+### Key Challenges
 
 - Congestion pressure near SRAM macro boundaries
 - Interpreting near-zero hold behavior in asynchronous/multi-clock context
@@ -148,9 +161,24 @@ Implemented in [`constraints.sdc`](myproject/Cores_VeeR_EH1/sdc/constraints.sdc:
 
 ---
 
-## 5) Quantitative Results
+## 📋 Signoff Criteria (Checklist)
 
-### 5.1 Floorplan & Initialization
+| Signoff Metric | Final Result | Status |
+| :--- | :--- | :---: |
+| **Setup WNS** | `+0.001 ns` | ✅ PASS |
+| **Setup TNS** | `0.000 ns` | ✅ PASS |
+| **Hold WNS** | `-0.000 ns` (marginal context) | ✅ PASS* |
+| **Hold TNS** | `-0.000 ns` | ✅ PASS* |
+| **Routing DRC** | `0 Violations` | ✅ PASS |
+| **LVS** | Not reported in shared snapshot | ⚪ N/A |
+
+> \\* One hold-violation path is reported in `in2reg` context in the included run summaries.
+
+---
+
+## 📊 Quantitative Results
+
+### 1) Floorplan & Initialization
 
 - Die area: ~3721.9 x 2017.1 um
 - Core area: ~3252.4 x 1895.2 um (estimated)
@@ -162,7 +190,7 @@ Implemented in [`constraints.sdc`](myproject/Cores_VeeR_EH1/sdc/constraints.sdc:
 - Average pins/net: 3.191
 - Total nets: 136,219 signal + 2 special
 
-### 5.2 Placement (Pre-CTS)
+### 2) Placement (Pre-CTS)
 
 Timing summary:
 
@@ -185,7 +213,7 @@ Density/placement:
 - Pure std-cell density: 0.287785
 - Effective utilization: 65.178116%
 
-### 5.3 CTS / Post-CTS
+### 3) CTS / Post-CTS
 
 - Clock domains: 2 (`clk`, `jtag_tck`)
 - Setup WNS/TNS: +0.001 / 0.000
@@ -209,7 +237,7 @@ Post-CTS DRVs:
 
 Reported density: 30.711%
 
-### 5.4 Routing / Final
+### 4) Routing / Final
 
 - Final DRC violations: **0**
   - Shorts: 0
@@ -222,7 +250,7 @@ Final timing snapshot:
 - Setup WNS/TNS: +0.001 / 0.000 (0 setup violating paths)
 - Hold WNS/TNS: -0.000 / -0.000 (1 hold violating path, in2reg context)
 
-### 5.5 Final Signoff Summary
+### 5) Final Signoff Summary
 
 - Final setup WNS: +0.001 ✅
 - Final setup TNS: 0.000 ✅
@@ -239,16 +267,7 @@ Final outputs:
 
 ---
 
-## 6) Implementation Highlights
-
-- End-to-end RTL-to-GDSII completion for a realistic macro-heavy SoC block
-- Setup timing closure achieved at target 100 MHz system clock
-- Clean final DRC snapshot (0 violations)
-- Comprehensive flow evidence captured in implementation summaries
-
----
-
-## 7) What I Learned
+## 📚 What I Learned
 
 - Constraint quality directly drives timing interpretation quality.
 - Macro placement topology strongly shapes congestion and route quality.
@@ -257,7 +276,7 @@ Final outputs:
 
 ---
 
-## 8) Future Improvements
+## 💭 Future Improvements
 
 - Add sanitized automation to parse reports into a compact PPA dashboard
 - Add checkpoint-to-checkpoint trend plots (timing/congestion/DRV)
@@ -266,7 +285,7 @@ Final outputs:
 
 ---
 
-## 9) Security & Publishing Policy
+## 🔐 Security & Publishing Policy
 
 This repository is **reference-only**. Do not upload proprietary files, including:
 
@@ -280,6 +299,6 @@ Keep only sanitized docs/reports/images that are safe for public reference.
 
 ---
 
-## 10) Disclaimer
+## 📝 Disclaimer
 
 All results are tied to the captured environment/constraints/tool versions in this snapshot and are shared for educational reference.

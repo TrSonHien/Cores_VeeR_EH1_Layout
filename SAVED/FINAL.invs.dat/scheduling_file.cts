@@ -1,0 +1,16 @@
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_7__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_2__dccm_bank_u_sram_2048x64/A_CLK  298.60ps 298.60ps 298.60ps 298.60ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_0__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_4__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_1__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_6__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_5__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_3__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_7__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_2__dccm_bank_u_sram_2048x64/A_CLK  298.60ps 298.60ps 298.60ps 298.60ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_0__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_4__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_1__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_6__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_5__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc
+MacroModel pin mem_Gen_dccm_enable_dccm_mem_bank_3__dccm_bank_u_sram_2048x64/A_CLK  300.00ps 300.00ps 300.00ps 300.00ps 0pf func_view_wc

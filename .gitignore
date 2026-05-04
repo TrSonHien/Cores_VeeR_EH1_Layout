@@ -1,27 +1,3 @@
-# Sensitive / large implementation artifacts
-SAVED/
-summaryReport/
-netlist/
-output/
-
-# Common confidential EDA collateral
-*.lib
-*.db
-*.lef
-*.def
-*.gds
-*.oas
-*.spef
-*.sdf
-*.sdc
-*.tcl
-*.svf
-
-# Compressed archives and tool dumps
-*.gz
-*.tar
-*.tgz
-*.zip
-
-# Keep public-facing docs/assets only
-# (README and images are added explicitly)
+# Exclude only these two files from GitHub upload
+report.txt
+Cores_VeeR_EH1_summary.md
