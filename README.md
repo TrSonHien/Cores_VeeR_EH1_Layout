@@ -94,70 +94,143 @@ Cell mix highlights (from Innovus summary):
 
 ---
 
-## 🦉 The Process & Challenges
+## 🦉 Process, Challenges & Quantitative Results
 
-### Step-by-step Physical Flow
+This section combines the implementation journey with measurable results at each stage.
 
-1. **Data Prep & Synthesis (Genus):** RTL read/elaboration + mapping/optimization
-   - Netlist handoff is used as input for physical implementation.
+### Stage 1) Data Prep & Synthesis (Genus)
 
-2. **Floorplan / Initialization (`00_init_design`):** die/core setup, macro-aware layout initialization.
+1. **What was done:** RTL read/elaboration + mapping/optimization.
+2. **Challenge:** Ensure clean handoff for physical implementation.
+3. **Result:** Netlist handoff used as input for PnR stages.
 
-   ![01_floorplan](images/01_floorplan.png)
+### Stage 2) Floorplan / Initialization (`00_init_design`)
 
-   - The floorplan shows macro-dominant organization (SRAM-heavy), which directly influences congestion and timing topology.
+1. **What was done:** Die/core setup and macro-aware initialization.
 
-3. **Placement (`02_place_opt`):** standard-cell placement and early optimization.
+   ![Step 2 - Floorplan](images/01_floorplan.png)
 
-   ![02_placement_density](images/02_placement_density.png)
+2. **Challenge:** Macro-heavy topology (SRAMs) constrains routing channels.
+3. **Quantitative results:**
+   - Die area: ~3721.9 x 2017.1 um
+   - Core area: ~3252.4 x 1895.2 um (estimated)
+   - Core utilization: **65.18%**
+   - Alloc area: 3,160,567 sites (5,734,533 um²)
+   - Std-cell area: 909,563 sites (1,650,311 um²)
+   - Hard macros: 28
+   - Pin density: 0.06255 (398,436 pins / 6,370,314 area)
+   - Average pins/net: 3.191
+   - Total nets: 136,219 signal + 2 special
 
-   - Density view confirms concentrated logic channels between macros and identifies hotspot regions.
+### Stage 3) Placement (`02_place_opt`)
 
-4. **Power Grid / Early Route Visibility:** routing accessibility and distribution across the core.
+1. **What was done:** Standard-cell placement and pre-CTS optimization.
 
-   ![03_power_grid](images/03_power_grid.png)
+   ![Step 3 - Placement Density](images/02_placement_density.png)
 
-   - This view helps validate macro/channel routing accessibility before late-stage optimization.
+2. **Challenge:** Manage congestion in logic channels between macros.
+3. **Quantitative results:**
+   - Setup WNS/TNS: **+0.001 / 0.000 ns**
+   - Hold WNS/TNS: **0.000 / 0.000 ns**
+   - Hold violating paths: 1
+   - Setup violating paths: 0
+   - Normalized max hotspot: **0.52**
+   - Normalized total hotspot: **2.08**
+   - Top hotspot #1 bbox: (1332.60, 1635.06) – (1453.56, 1756.02)
+   - Placed instances: 143,662
+   - Pure std-cell density: 0.287785
+   - Effective utilization: 65.178116%
 
-5. **Clock Tree Synthesis (`03_cts`, `04_cts_opt`):** clock distribution construction and balancing.
+### Stage 4) Power Grid / Early Route Visibility
 
-   ![04_clock_tree](images/04_clock_tree.png)
+1. **What was done:** Checked routing accessibility/distribution across macro boundaries.
 
-   - Clock structure spans macro-separated regions and supports system/JTAG timing domains.
+   ![Step 4 - Power Grid](images/03_power_grid.png)
 
-6. **Detailed Routing / Post-route (`05_route`, `06_route_opt`):** full signal routing and cleanup.
+2. **Challenge:** Preserve routability ahead of CTS and detailed route.
+3. **Result:** Macro/channel access validated before later optimization.
 
-   ![05_routing_all_layers](images/05_routing_all_layers.png)
+### Stage 5) Clock Tree Synthesis (`03_cts`, `04_cts_opt`)
 
-   - All routed layers are visible in the final implementation snapshot.
+1. **What was done:** Clock distribution construction and balancing.
 
-7. **Routing Quality Deep-Dive:** inspect local detail and via-rich areas.
+   ![Step 5 - Clock Tree](images/04_clock_tree.png)
 
-   ![06_routing_zoom](images/06_routing_zoom.png)
+2. **Challenge:** Balance insertion/skew across macro-separated regions and 2 clock domains.
+3. **Quantitative results:**
+   - Clock domains: 2 (`clk`, `jtag_tck`)
+   - Setup WNS/TNS: +0.001 / 0.000
+   - Hold WNS/TNS: 0.000 / 0.000
+   - Hold violating paths: 1 (in2reg)
+   - Path groups: reg2reg 33,842 | in2reg 15,593 | reg2out 616 | mem2reg 1,390 | reg2mem 1,236
+   - DRVs: max_cap 940 (worst -0.138), max_tran 4 (worst -0.015), max_fanout 3 (worst -2), max_length 0
+   - Reported density: 30.711%
 
-   - Zoomed view demonstrates dense signal/via usage in critical regions.
+### Stage 6) Detailed Routing / Post-route (`05_route`, `06_route_opt`)
 
-8. **Congestion & Critical Region Review:** hotspot and path context analysis.
+1. **What was done:** Full signal routing and post-route cleanup.
 
-   ![07_congestion_map](images/07_congestion_map.png)
+   ![Step 6 - Routed Layout (All Layers)](images/05_routing_all_layers.png)
 
-   - Congestion concentration near macro boundaries is consistent with macro placement topology.
+2. **Challenge:** Achieve DRC-clean routing with dense macro surroundings.
+3. **Quantitative results:**
+   - Final DRC violations: **0**
+   - Shorts: 0
+   - Spacing: 0
+   - Routing layers: Metal1–Metal5, TopMetal1, TopMetal2
 
-9. **Timing Summary / Signoff Snapshot:** review setup/hold and DRV status.
+### Stage 7) Routing Quality Deep-Dive
 
-   ![08_timing_path](images/08_timing_path.png)
+1. **What was done:** Inspected local detail and via-rich regions.
 
-   ![10_timing_summary_report](images/10_timing_summary_report.png)
+   ![Step 7 - Routing Zoom](images/06_routing_zoom.png)
 
-   - Final snapshot indicates setup closure and clean DRC context in the provided reports.
+2. **Challenge:** Control local route quality while preserving timing closure.
+3. **Result:** Dense signal/via structures preserved with clean final DRC summary.
 
-10. **Final export:** DEF/LEF/netlist + summary artifacts for documentation/reference.
+### Stage 8) Congestion & Critical Region Review
 
-### Key Challenges
+1. **What was done:** Hotspot and critical path context analysis.
+
+   ![Step 8 - Congestion Map](images/07_congestion_map.png)
+
+2. **Challenge:** Congestion concentration near macro boundaries.
+3. **Result:** Hotspot behavior matched macro placement topology expectations.
+
+### Stage 9) Timing Summary / Signoff Snapshot
+
+1. **What was done:** Reviewed setup/hold and DRV status.
+
+   ![Step 9 - Timing Path](images/08_timing_path.png)
+
+   ![Step 9 - Timing Summary Report](images/10_timing_summary_report.png)
+
+2. **Challenge:** Close setup while keeping hold under control in multi-clock context.
+3. **Quantitative results:**
+   - Setup WNS/TNS: +0.001 / 0.000 (0 setup violating paths)
+   - Hold WNS/TNS: 0.000 / 0.000
+   - Final setup WNS: +0.001 ✅
+   - Final setup TNS: 0.000 ✅
+   - Final hold WNS: 0.000 ✅
+   - Final hold TNS: 0.000 ✅
+   - Final DRC: 0 ✅
+   - Final LVS: clean ✅
+
+### Stage 10) Final Signoff & Export
+
+1. **What was done:** Exported final artifacts for documentation/reference.
+2. **Resulting outputs:**
+   - `output/06_postRoute/veer_wrapper.def.gz`
+   - `output/06_postRoute/veer_wrapper.v`
+   - `output/06_postRoute/veer_wrapper.lef`
+
+   - Signoff evidence: setup/hold summary + zero DRC in final run snapshot.
+
+### Key Challenges (Overall)
 
 - Congestion pressure near SRAM macro boundaries
-- Interpreting near-zero hold behavior in asynchronous/multi-clock context
-- Large output footprint (database/netlist/report scale) for publish-safe curation
+- Balancing timing closure and routability in a macro-dense layout
+- Large artifact footprint and publish-safe documentation curation
 
 ---
 
@@ -171,99 +244,6 @@ Cell mix highlights (from Innovus summary):
 | **Hold TNS** | `0.000 ns` | ✅ PASS |
 | **Routing DRC** | `0 Violations` | ✅ PASS |
 | **LVS** | Clean | ✅ PASS |
-
-
-
----
-
-## 📊 Quantitative Results
-
-### 1) Floorplan & Initialization
-
-- Die area: ~3721.9 x 2017.1 um
-- Core area: ~3252.4 x 1895.2 um (estimated)
-- Core utilization: **65.18%**
-- Alloc area: 3,160,567 sites (5,734,533 um²)
-- Std-cell area: 909,563 sites (1,650,311 um²)
-- Hard macros: 28
-- Pin density: 0.06255 (398,436 pins / 6,370,314 area)
-- Average pins/net: 3.191
-- Total nets: 136,219 signal + 2 special
-
-### 2) Placement (Pre-CTS)
-
-Timing summary:
-
-- Setup WNS: **+0.001 ns**
-- Setup TNS: **0.000 ns**
-- Hold WNS: **0.000 ns**
-- Hold TNS: **0.000 ns**
-- Hold violating paths: 1
-- Setup violating paths: 0
-
-Congestion:
-
-- Normalized max hotspot: **0.52**
-- Normalized total hotspot: **2.08**
-- Top hotspot #1 bbox: (1332.60, 1635.06) – (1453.56, 1756.02)
-
-Density/placement:
-
-- Placed instances: 143,662
-- Pure std-cell density: 0.287785
-- Effective utilization: 65.178116%
-
-### 3) CTS / Post-CTS
-
-- Clock domains: 2 (`clk`, `jtag_tck`)
-- Setup WNS/TNS: +0.001 / 0.000
-- Hold WNS/TNS: 0.000 / 0.000
-- Hold violating paths: 1 (in2reg)
-
-Path groups:
-
-- reg2reg: 33,842
-- in2reg: 15,593
-- reg2out: 616
-- mem2reg: 1,390
-- reg2mem: 1,236
-
-Post-CTS DRVs:
-
-- max_cap: 940 nets (worst -0.138)
-- max_tran: 4 nets (worst -0.015)
-- max_fanout: 3 nets (worst -2)
-- max_length: 0
-
-Reported density: 30.711%
-
-### 4) Routing / Final
-
-- Final DRC violations: **0**
-  - Shorts: 0
-  - Spacing: 0
-- Routing layers used: 7
-  - Metal1–Metal5, TopMetal1, TopMetal2
-
-Final timing snapshot:
-
-- Setup WNS/TNS: +0.001 / 0.000 (0 setup violating paths)
-- Hold WNS/TNS: 0.000 / 0.000
-
-### 5) Final Signoff Summary
-
-- Final setup WNS: +0.001 ✅
-- Final setup TNS: 0.000 ✅
-- Final hold WNS: 0.000 ✅
-- Final hold TNS: 0.000 ✅
-- Final DRC: 0 ✅
-- Final LVS: clean ✅
-
-Final outputs:
-
-- `output/06_postRoute/veer_wrapper.def.gz`
-- `output/06_postRoute/veer_wrapper.v`
-- `output/06_postRoute/veer_wrapper.lef`
 
 ---
 
