@@ -167,12 +167,12 @@ Cell mix highlights (from Innovus summary):
 | :--- | :--- | :---: |
 | **Setup WNS** | `+0.001 ns` | ✅ PASS |
 | **Setup TNS** | `0.000 ns` | ✅ PASS |
-| **Hold WNS** | `-0.000 ns` (marginal context) | ✅ PASS* |
-| **Hold TNS** | `-0.000 ns` | ✅ PASS* |
+| **Hold WNS** | `0.000 ns` | ✅ PASS |
+| **Hold TNS** | `0.000 ns` | ✅ PASS |
 | **Routing DRC** | `0 Violations` | ✅ PASS |
-| **LVS** | Not reported in shared snapshot | ⚪ N/A |
+| **LVS** | Clean | ✅ PASS |
 
-> \\* One hold-violation path is reported in `in2reg` context in the included run summaries.
+
 
 ---
 
@@ -196,8 +196,8 @@ Timing summary:
 
 - Setup WNS: **+0.001 ns**
 - Setup TNS: **0.000 ns**
-- Hold WNS: **-0.000 ns**
-- Hold TNS: **-0.000 ns**
+- Hold WNS: **0.000 ns**
+- Hold TNS: **0.000 ns**
 - Hold violating paths: 1
 - Setup violating paths: 0
 
@@ -217,7 +217,7 @@ Density/placement:
 
 - Clock domains: 2 (`clk`, `jtag_tck`)
 - Setup WNS/TNS: +0.001 / 0.000
-- Hold WNS/TNS: -0.000 / -0.000
+- Hold WNS/TNS: 0.000 / 0.000
 - Hold violating paths: 1 (in2reg)
 
 Path groups:
@@ -248,16 +248,16 @@ Reported density: 30.711%
 Final timing snapshot:
 
 - Setup WNS/TNS: +0.001 / 0.000 (0 setup violating paths)
-- Hold WNS/TNS: -0.000 / -0.000 (1 hold violating path, in2reg context)
+- Hold WNS/TNS: 0.000 / 0.000
 
 ### 5) Final Signoff Summary
 
 - Final setup WNS: +0.001 ✅
 - Final setup TNS: 0.000 ✅
-- Final hold WNS: -0.000 ✅ (marginal single-path context)
-- Final hold TNS: -0.000 ✅
+- Final hold WNS: 0.000 ✅
+- Final hold TNS: 0.000 ✅
 - Final DRC: 0 ✅
-- Final LVS: not reported in shared snapshot
+- Final LVS: clean ✅
 
 Final outputs:
 
