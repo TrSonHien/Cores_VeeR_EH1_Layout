@@ -122,11 +122,21 @@ This section combines the implementation journey with measurable results at each
    - Average pins/net: 3.191
    - Total nets: 136,219 signal + 2 special
 
-### Stage 3) Placement (`02_place_opt`)
+### Stage 3) Power Grid / Early Route Visibility
+
+1. **What was done:** Built and checked PG/routing accessibility across macro boundaries before placement.
+
+   ![Step 3 - Power Grid](images/03_power_grid.png)
+
+2. **Challenge:** Preserve routability and stable distribution ahead of placement/CTS.
+3. **Quantitative results:**
+   - PG was established prior to placement as part of initialization flow.
+
+### Stage 4) Placement (`02_place_opt`)
 
 1. **What was done:** Standard-cell placement and pre-CTS optimization.
 
-   ![Step 3 - Placement Density](images/02_placement_density.png)
+   ![Step 4 - Placement Density](images/02_placement_density.png)
 
 2. **Challenge:** Manage congestion in logic channels between macros.
 3. **Quantitative results:**
@@ -140,15 +150,6 @@ This section combines the implementation journey with measurable results at each
    - Placed instances: 143,662
    - Pure std-cell density: 0.287785
    - Effective utilization: 65.178116%
-
-### Stage 4) Power Grid / Early Route Visibility
-
-1. **What was done:** Checked routing accessibility/distribution across macro boundaries.
-
-   ![Step 4 - Power Grid](images/03_power_grid.png)
-
-2. **Challenge:** Preserve routability ahead of CTS and detailed route.
-3. **Result:** Macro/channel access validated before later optimization.
 
 ### Stage 5) Clock Tree Synthesis (`03_cts`, `04_cts_opt`)
 
