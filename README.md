@@ -112,8 +112,8 @@ This section combines the implementation journey with measurable results at each
 
 2. **Challenge:** Macro-heavy topology (SRAMs) constrains routing channels.
 3. **Quantitative results:**
-   - Die area: ~3721.9 x 2017.1 um
-   - Core area: ~3252.4 x 1895.2 um (estimated)
+   - Die area: ~2740 x 2740 um
+   - Core area: ~2524 x 2524 um (estimated)
    - Core utilization: **65.18%**
    - Alloc area: 3,160,567 sites (5,734,533 um²)
    - Std-cell area: 909,563 sites (1,650,311 um²)
